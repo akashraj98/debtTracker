@@ -15,7 +15,7 @@ adds transaction to the record based on date
 example:
 ```
 $ tracker add -t '<- Ben 800 \\ for my new PC'
-$ tracker add -t '-> Ben 100 \\ for his new router' -d '12-03-2019
+$ tracker add -t '-> Ben 100 \\ for his new router' -d '12-03-2019'
 ```
 
 ### show
