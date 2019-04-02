@@ -29,6 +29,7 @@ def parseDate(dateString):
     return date
 
 def addTransaction(rec, args):
+    '''function implementing add command'''
     if not args.transaction:
         print("provide transaction string with add command: ./track add -t 'direction name amount comment'")
         sys.exit()
@@ -42,6 +43,7 @@ def addTransaction(rec, args):
         rec.addTransaction(dtransaction)
 
 def transactionTotal(rec, args):
+    '''function implementing total command'''
     dateKeyFunction = lambda x: True
     nameKeyFunction = lambda x: True
     
@@ -58,6 +60,7 @@ def transactionTotal(rec, args):
     print('total debt: {}'.format(total))
 
 def showTransaction(rec, args):
+    '''function implementing show command'''
     print(rec)
 
 def main():
