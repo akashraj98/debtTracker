@@ -10,9 +10,12 @@ def parseDate(strDate):
     return datetime.date(year, month, day)
 
 def readFile(fileName):
-    with open(fileName) as f:
-        fileString = f.read()
-    return fileString
+    try:
+        with open(fileName) as f:
+            fileString = f.read()
+        return fileString
+    except:
+        return ''
 
 class transaction():
     def __init__(self, direction, name, amount):
@@ -57,17 +60,30 @@ class detailedTransaction(transaction):
 
     @classmethod
     def getTransaction(cls, transactionString):
-        twoParts = transactionString.split(r'\\')
-        nonComment = twoParts[0]
-        comment = twoParts[1]
-        wordList = nonComment.split()
-        direction = wordList[0]
-        name = wordList[1]
-        amount = float(wordList[2])
+        Parts = transactionString.split(r'//')
+        try:
+            try:
+                comment = Parts[1]
+            except:
+                comment = ''
+        
+            nonComment = Parts[0]
+            wordList = nonComment.split()
+            if wordList[0] != '<-' and wordList[0] != '->':
+                raise ValueError
+            direction = wordList[0]
+            if len(wordList[1]) == 0:
+                raise ValueError
+            name = wordList[1]
+            amount = float(wordList[2])
+        except:
+            print('invalid transaction string :' + transactionString)
+            direction = name = comment = ''
+            amount = 0
         return detailedTransaction(direction, name, amount, comment)
 
     def __repr__(self):
-        return transaction.__repr__(self) + r' \\' + self.comment
+        return transaction.__repr__(self) + r' //' + self.comment
 
 class transactionList():
     def __init__(self, transactionList = []):
