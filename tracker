@@ -47,7 +47,7 @@ def transactionTotal(rec, args):
     
     if args.name:
         nameKeyFunction = lambda x: True if x.getName() == args.name else False
-        print('for {}'.format(name))
+        print('for {}'.format(args.name))
 
     if args.date:
         date = parseDate(args.date)
@@ -57,9 +57,12 @@ def transactionTotal(rec, args):
     total = rec.getTotalAmountforDate(dateKeyFunction, nameKeyFunction)
     print('total debt: {}'.format(total))
 
+def showTransaction(rec, args):
+    print(rec)
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('command', choices = ['add', 'total'],
+    parser.add_argument('command', choices = ['add', 'total', 'show'],
                          metavar = 'command',
                          help='command to execute, i.e. total/add')
     parser.add_argument('-f', '--file', metavar = 'filename', default='.record',
@@ -75,7 +78,8 @@ def main():
     currentRecord.load(args.file)
     
     command = {'add': addTransaction,
-               'total': transactionTotal}
+               'total': transactionTotal,
+               'show' : showTransaction}
     command[args.command](currentRecord, args)
    
     currentRecord.write(args.file)

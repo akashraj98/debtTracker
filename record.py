@@ -18,6 +18,7 @@ def readFile(fileName):
         return ''
 
 class transaction():
+    ''''''
     def __init__(self, direction, name, amount):
         '''direction: string, either one of '<-' or '->'
            name: string, entity with which transaction was performed
