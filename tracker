@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+
+import record
+
+import argparse
+import datetime
+import sys
+
+def parseTransaction(transactionString):
+    return record.detailedTransaction.getTransaction(transactionString)
+
+def parseDate(dateString):
+    dateList = dateString.split('-')
+    try:
+        day = int(dateList[0])
+        month = int(dateList[1])
+        year = int(dateList[2])
+        date = datetime.date(year, month, day)
+    except IndexError:
+        print('provide day, month, year in format dd-mm-yyyy')
+        date = datetime.date.today()
+    except ValueError:
+        print('please provide only integers for day, month, year in format dd-mm-yyyy')
+        date = datetime.date.today()
+    except:
+        print('error in date format, please provide date in dd-mm-yyyy format')
+        date = datetime.date.today()
+
+    return date
+
+def addTransaction(rec, args):
+    if not args.transaction:
+        print("provide transaction string with add command: ./track add -t 'direction name amount comment'")
+        sys.exit()
+    
+    dtransaction = parseTransaction(args.transaction)
+     
+    if args.date is not None:
+        date = parseDate(args.date)
+        rec.addTransaction(dtransaction, date)
+    else:
+        rec.addTransaction(dtransaction)
+
+def transactionTotal(rec, args):
+    dateKeyFunction = lambda x: True
+    nameKeyFunction = lambda x: True
+    
+    if args.name:
+        nameKeyFunction = lambda x: True if x.getName() == args.name else False
+        print('for {}'.format(name))
+
+    if args.date:
+        date = parseDate(args.date)
+        dateKeyFunction = lambda x: True if x == date else False
+        print('on {}'.format(date))
+
+    total = rec.getTotalAmountforDate(dateKeyFunction, nameKeyFunction)
+    print('total debt: {}'.format(total))
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('command', choices = ['add', 'total'],
+                         metavar = 'command',
+                         help='command to execute, i.e. total/add')
+    parser.add_argument('-f', '--file', metavar = 'filename', default='.record',
+                        help='file to read records from')
+    parser.add_argument('-t', '--transaction', metavar = 'transaction',
+                        help='transaction with optional comment')
+    parser.add_argument('-d', '--date', metavar = 'date',
+                        help='date in dd-mm-yyy format')
+    parser.add_argument('-n', '--name', metavar = 'name',
+                        help='non-space string')
+    args = parser.parse_args()
+    currentRecord = record.record()
+    currentRecord.load(args.file)
+    
+    command = {'add': addTransaction,
+               'total': transactionTotal}
+    command[args.command](currentRecord, args)
+   
+    currentRecord.write(args.file)
+    
+
+if __name__ == '__main__':
+    main()
